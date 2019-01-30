@@ -1,0 +1,15 @@
+<suite name="arcoSmoke">
+<test name="SmokeTest" preserve-order="true">
+<classes>
+<class name="com.arco.scripts.ASMLoginTest"/>
+<class name="com.arco.scripts.UserCanLogintoBackOfficeTest"/>
+<class name="com.arco.scripts.WCMSCockpitLoginTest"/>
+<class name="com.arco.scripts.ProductSearchStoreFrontTest"/>
+<class name="com.arco.scripts.StoreLocatorFunctionalityTest"/>
+<class name="com.arco.scripts.RegistrationTest"/>
+<class name="com.arco.scripts.PlacingOrderTest"/>
+<class name="com.arco.scripts.PlacingOrderFromQuickOrderTest"/>
+<class name="com.arco.scripts.PlacingOrderAsGuestUserTest"/>
+</classes>
+</test>
+</suite>

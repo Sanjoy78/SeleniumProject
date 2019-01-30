@@ -1,0 +1,73 @@
+
+<!--Project tag used to mention the project name, and basedir attribute will be the root directory of the application-->
+<project name="ARCO_AUTOMATION" basedir=".">
+	<!--Property tags will be used as variables in build.xml file to use in further steps-->
+	<property name="build.dir" value="${basedir}/build" />
+	<!-- put  testng related jar in the resource  folder -->
+	<property name="external.jars" value=".\lib" />
+	<property name="src.dir" value="${basedir}/src" />
+
+	<!-- to generate XSLT report-->
+	<property name="LIB" value="${basedir}/lib" />
+	<property name="BIN" value="${basedir}/bin" />
+
+	<path id="master-classpath">
+		<pathelement location="${BIN}" />
+		<fileset dir="${LIB}" includes="*.jar" />
+	</path>
+
+	<target name="generateReport" depends="run">
+		<delete dir="${basedir}/testng-xslt">
+		</delete>
+		<mkdir dir="${basedir}/testng-xslt">
+		</mkdir>
+		<xslt in="${basedir}/test-output/testng-results.xml" style="${basedir}/testng-results.xsl" out="${basedir}/testng-xslt/index.html">
+			<param expression="${basedir}/testng-xslt/" name="testNgXslt.outputDir" />
+			<param expression="true" name="testNgXslt.sortTestCaseLinks" />
+			<param expression="FAIL,SKIP,PASS,CONF,BY_CLASS" name="testNgXslt.testDetailsFilter" />
+			<param expression="true" name="testNgXslt.showRuntimeTotals" />
+			<classpath refid="master-classpath">
+			</classpath>
+		</xslt>
+	</target>
+
+	<!--Target tags used as steps that will execute in  sequential order. name attribute will be the name
+    of the target and 'depends' attribute used to make one target to depend on another target-->
+	<!-- Load testNG and add to the class path of application -->
+
+
+	<target name="loadTestNG" depends="setClassPath">
+		<taskdef resource="testngtasks" classpath="${test.classpath}" />
+	</target>
+	<target name="setClassPath" depends="clean">
+		<path id="classpath_jars">
+			<pathelement path="${basedir}/" />
+			<fileset dir="${external.jars}" includes="*.jar" />
+		</path>
+		<pathconvert pathsep=";" property="test.classpath" refid="classpath_jars" />
+	</target>
+	<target name="clean">
+		<!--echo tag will use to print text on console-->
+		<echo message="deleting existing build directory" />
+		<!--delete tag will clean data from given folder-->
+		<delete dir="${build.dir}" />
+	</target>
+	<target name="compile" depends="loadTestNG">
+		<echo message="classpath:${test.classpath}" />
+		<echo message="compiling.........." />
+		<!--mkdir tag will create new director-->
+		<mkdir dir="${build.dir}" />
+		<echo message="classpath:${test.classpath}" />
+		<echo message="compiling.........." />
+		<!--javac tag used to compile java source code and move .class files to a new folder-->
+		<javac destdir="${build.dir}" srcdir="${src.dir}">
+			<classpath refid="classpath_jars" />
+		</javac>
+	</target>
+	<target name="run" depends="compile">
+		<!-- testng tag will be used to execute testng code using corresponding testng.xml file -->
+		<testng classpath="${test.classpath};${build.dir}">
+			<xmlfileset dir="${basedir}" includes="testng.xml" />
+		</testng>
+	</target>
+</project>
